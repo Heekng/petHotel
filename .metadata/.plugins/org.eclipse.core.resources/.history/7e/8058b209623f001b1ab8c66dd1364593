@@ -1,0 +1,25 @@
+package predicate;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class PredicateEx {
+	ArrayList<Student> list = Arrays.asList(
+			new Student("È«±æµ¿", "³²ÀÚ", 90),
+			new Student("±è¼øÈñ", "¿©ÀÚ", 90),
+			new Student("È«±æµ¿", "³²ÀÚ", 95),
+			new Student("È«±æµ¿", "³²ÀÚ", 92));
+	
+	public static void main(String[] args) {
+	}
+}
+class Student{
+	String name;
+	String sex;
+	int score;
+	public Student(String name, String sex, int score) {
+		this.name = name;
+		this.sex = sex;
+		this.score = score;
+	}
+}

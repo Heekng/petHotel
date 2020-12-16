@@ -1,0 +1,20 @@
+package View;
+
+import java.awt.BorderLayout;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class LoopUpView extends MainView{
+
+	public LoopUpView() {
+		setTitle("고객 조회");
+		JPanel choicePn = new JPanel();
+		choicePn.setLayout(new BoxLayout(choicePn, BoxLayout.X_AXIS));
+		JTextField numTf = new JTextField(8);
+		JButton numBt = new JButton("전화번호 조회");
+		JButton allBt = new JButton("전체 조회");
+	}
+}

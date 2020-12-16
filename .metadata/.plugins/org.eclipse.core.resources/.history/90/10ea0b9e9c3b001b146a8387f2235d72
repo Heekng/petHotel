@@ -1,0 +1,57 @@
+package View;
+
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+
+public class LoopUpView extends MainView{
+	public ArrayList<String[]> arr = new ArrayList<>();
+	public int phoneNum;
+	public String data[][] = new String[10][4];
+	public JButton backBt;
+	public JPanel listPn;
+	
+	public LoopUpView() {
+		String title[] = {"펫이름", "방번호", "입실날짜", "퇴실날짜"};
+		
+		setTitle("고객 조회");
+		JPanel choicePn = new JPanel();
+		choicePn.setLayout(new BoxLayout(choicePn, BoxLayout.X_AXIS));
+		
+		JTextField numTf = new JTextField(8);
+		choicePn.add(numTf);
+		JButton numBt = new JButton("전화번호 조회");
+		choicePn.add(numBt);
+		JButton allBt = new JButton("전체 조회");
+		choicePn.add(allBt);
+		
+		JTable table = new JTable(data, title);
+		table.setRowHeight(19);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		JScrollPane sp = new JScrollPane(table);
+		listPn.add(sp);
+		
+		JPanel buttonPn = new JPanel();
+		backBt = new JButton("뒤로 가기");
+		buttonPn.add(backBt);
+		
+		
+		add(choicePn);
+		
+		setVisible(true);
+	}
+	public void review() {
+		listPn.setVisible(false);
+		listPn.setVisible(true);		
+	}
+}

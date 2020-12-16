@@ -1,0 +1,18 @@
+package predicate;
+
+public class PredicateEx {
+	public static void main(String[] args) {
+		
+	}
+}
+class Student{
+	String name;
+	String sex;
+	int score;
+	public Student(String name, String sex, int score) {
+		this.name = name;
+		this.sex = sex;
+		this.score = score;
+		
+	}
+}

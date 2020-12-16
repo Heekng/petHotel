@@ -1,0 +1,14 @@
+package View;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+
+public class ManagerMenuView extends MainView{
+	
+	public ManagerMenuView() {
+		setTitle("관리자 메뉴");
+		
+		JPanel imagePn = new JPanel();
+		ImageIcon image = new ImageIcon("./Image/고객메뉴이미지.png");
+	}
+}

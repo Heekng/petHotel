@@ -1,0 +1,39 @@
+package View;
+
+import java.awt.FlowLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import DTO.Pet;
+
+public class ChoiceChangeView extends MainView{
+	
+	public ChoiceChangeView(Pet pet) {
+		setTitle("수정 선택");
+		setSize(400, 400);
+		
+		JPanel guidPn = new JPanel();
+		JLabel guidLb = new JLabel("수정할 내용을 변경해주세요.");
+		guidPn.add(guidLb);
+		
+		JPanel petNamePn = new JPanel(new FlowLayout());
+		JLabel petNameLb = new JLabel("펫 이름");
+		JTextField petNameTf = new JTextField(pet.getPetName());
+		petNamePn.add(petNameLb);
+		petNamePn.add(petNameTf);
+
+		JPanel petNamePn = new JPanel(new FlowLayout());
+		JLabel petNameLb = new JLabel("펫 이름");
+		JTextField petNameTf = new JTextField(pet.getPetName());
+		petNamePn.add(petNameLb);
+		petNamePn.add(petNameTf);
+		
+		
+		
+		add(guidPn);
+		
+		setVisible(true);
+	}
+}

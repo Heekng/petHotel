@@ -1,0 +1,45 @@
+package View;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class cusLookupView extends MainView{
+	JButton backBt;
+	public cusLookupView(ArrayList<String[]> arr) {
+		setTitle("예약 조회");
+		String title[] = {"펫이름", "방번호", "입실날짜", "퇴실날짜"};
+		String data[][] = new String[10][4];
+		//값넣기
+		for (int i = 0; i < arr.size(); i++) {
+			data[i] = arr.get(i);
+		}
+				
+		JPanel listPn = new JPanel();
+		
+		JTable table = new JTable(data, title);
+		table.setRowHeight(19);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		JScrollPane sp = new JScrollPane(table);
+		listPn.add(sp);
+		
+		JPanel buttonPn = new JPanel();
+		backBt = new JButton("뒤로 가기");
+		buttonPn.add(backBt);
+		
+		add(listPn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+	
+}

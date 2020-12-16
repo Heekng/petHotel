@@ -1,0 +1,13 @@
+package View;
+
+import javax.swing.JPanel;
+
+public class Tmp extends MainView{
+	public Tmp() {
+		
+		JPanel panel = new JPanel();
+		
+		
+	}
+
+}

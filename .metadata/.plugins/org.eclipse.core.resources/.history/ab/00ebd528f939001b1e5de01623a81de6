@@ -1,0 +1,56 @@
+package View;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class cusLookupView extends DefaultTableModel{
+	
+	
+	
+	public cusLookupView() {
+		JFrame frame = new JFrame();
+		frame.setSize(500, 700);
+		frame.setResizable(false);
+		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+//		frame.setFont(mmFont);
+		
+		Dimension dimen = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension dimen2 = frame.getSize();
+		int x = (dimen.width - dimen2.width)/2;
+		int y= (dimen.height - dimen2.height)/2;
+		frame.setLocation(x, y);
+		
+		frame.setTitle("고객 조회");
+		String title[] = {"펫이름", "방번호", "입실날짜", "퇴실날짜"};
+		String data[][] = new String[10][4];
+		
+		
+		JPanel listPn = new JPanel();
+		
+		JTable table = new JTable(data, title);
+		table.setRowHeight(19);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		table.setModel(tableModel);
+		JScrollPane sp = new JScrollPane(table);
+		listPn.add(sp);
+		
+		frame.add(listPn);
+		
+		frame.setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		new cusLookupView();
+	}
+}

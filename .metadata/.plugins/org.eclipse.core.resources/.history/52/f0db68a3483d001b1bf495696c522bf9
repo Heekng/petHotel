@@ -1,0 +1,53 @@
+package View;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class CusLookupView extends MainView{
+	public JButton backBt;
+	public CusLookupView(ArrayList<String[]> arr, int phoneNum) {
+		setTitle("예약 조회");
+		String title[] = {"펫이름", "방번호", "입실날짜", "퇴실날짜"};
+		int size;
+//		if(arr.size())
+		String data[][] = new String[50][4];
+		//값넣기
+		for (int i = 0; i < arr.size(); i++) {
+			data[i] = arr.get(i);
+		}
+		
+		JPanel userPn = new JPanel();
+		JLabel userLb = new JLabel(phoneNum+"님의 예약정보입니다.");
+		userPn.add(userLb);
+		
+		JPanel listPn = new JPanel();
+		
+		JTable table = new JTable(data, title);
+		table.setRowHeight(19);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		JScrollPane sp = new JScrollPane(table);
+		listPn.add(sp);
+		
+		JPanel buttonPn = new JPanel();
+		backBt = new JButton("뒤로 가기");
+		buttonPn.add(backBt);
+		
+		add(userPn);
+		add(listPn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+	
+}

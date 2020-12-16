@@ -1,0 +1,9 @@
+package View;
+
+public class ChangePasswordView extends MainView{
+	
+	public ChangePasswordView() {
+		setTitle("관리자 비밀번호 변경");
+		
+	}
+}

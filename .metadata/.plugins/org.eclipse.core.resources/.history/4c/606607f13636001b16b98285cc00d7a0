@@ -1,0 +1,358 @@
+package DAO;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+
+import DTO.Customer;
+import DTO.Day;
+import DTO.Manager;
+import DTO.Pet;
+
+public class Business {
+	SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
+	Scanner sc = new Scanner(System.in);	
+	Manager manager = new Manager();
+
+	public void start() {
+		boolean flag = true;
+		while(flag) {
+			System.out.println("---사용자선택---");
+			System.out.println("1.고객 2.관리자 3.닫기");
+			System.out.print("입력: ");
+			int choice = sc.nextInt();
+			switch (choice) {
+			case 1:
+				customerLogin();
+				break;
+			case 2:
+				System.out.println("관리자");
+				break;
+			case 3:
+				flag = false;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	public void customerLogin() { //고객로그인창
+		String phoneNum, password;
+		int rePhoneNum, rePassword;
+		Customer customer = null;
+		System.out.println("---고객로그인---");
+		useFnc.customPtrn("전화번호를 입력해주세요[-제외]: 010", "[1-5]0[1-5]", "호수를 확인해주세요.\n방 선택:");
+		System.out.print("전화번호를 입력해주세요[-제외]: 010");
+		while(true) {
+			phoneNum = sc.next();
+			if(Pattern.matches("\\d{8}", phoneNum)) {
+				rePhoneNum = Integer.parseInt(phoneNum);
+				break;
+			}else {
+				System.out.print("전화번호는 숫자 8자리로 입력해주세요.\n입력: 010");
+			}
+		}
+		if(manager.getCustomerData().containsKey(rePhoneNum)) { //해당 번호가 존재하면?
+			System.out.print("비밀번호를 입력해주세요[4자리]: ");
+			while(true) {
+				password = sc.next();
+				if(Pattern.matches("\\d{4}", password)) {
+					rePassword = Integer.parseInt(password);
+					break;
+				}else {
+					System.out.print("비밀번호는 숫자 4자리로 입력해주세요.\n입력: ");
+				}
+			}
+			if(manager.getCustomerData().get(rePhoneNum).getPassword() == rePassword) {
+				//로그인성공
+				customerMenu(rePhoneNum);
+			}else {
+				System.out.println("비밀번호가 틀렸습니다. 처음으로 돌아갑니다.");
+			}
+		}else {//고객 못찾았을 때
+			System.out.print("첫 이용 고객\n비밀번호를 설정해주세요[4자리]");
+			while(true) {
+				password = sc.next();
+				if(Pattern.matches("\\d{4}", password)) {
+					rePassword = Integer.parseInt(password);
+					break;
+				}else {
+					System.out.print("비밀번호는 숫자 4자리로 입력해주세요.\n입력: ");
+				}
+			}
+			customer = new Customer();
+			customer.setPassword(rePassword);
+			manager.getCustomerData().put(rePhoneNum, customer);
+			System.out.println("가입완료 자동로그인됩니다.");
+			customerMenu(rePhoneNum);
+		}		
+	}
+
+	public void customerMenu(int phoneNum) {
+		boolean flag = true;
+		while(flag) {
+			System.out.println("---고객메뉴---");
+			System.out.println("1.호텔예약 2.예약조회 3.기간연장 4.예약취소 5.종료");
+			System.out.print("입력: ");
+			switch (sc.nextInt()) {
+			case 1: //호텔예약
+				cusAppointment(phoneNum);
+				break;
+			case 2: //예약조회
+				cusLookup(phoneNum);
+				break;
+			case 3: //기간연장
+				cusExtend(phoneNum);
+				break;
+			case 4: //예약취소
+
+				break;
+			case 5: //종료
+				flag = false;
+				break;
+			default:
+				break;
+			}
+
+		}
+	}
+
+	public void cusAppointment(int phoneNum) { //호텔 예약
+		String petName, enterDate, exitDate;
+		LocalDate reEnterDate, reExitDate;
+		System.out.println("---펫 호텔 예약---");
+		while(true) {
+			System.out.print("펫 이름: ");
+			petName = sc.next();
+			System.out.print("입실날짜[년월일 6자리]: ");
+			enterDate = sc.next();
+			System.out.print("퇴실날짜[년월일 6자리]: ");
+			exitDate = sc.next();						
+			if(petName.length()!=0 && Pattern.matches("\\d{6}", enterDate) && Pattern.matches("\\d{6}", exitDate)) {
+				break;
+			}else {
+				System.out.println("정보가 잘못되었습니다. 다시 입력해주세요.");
+			}
+		}
+		reEnterDate = useFnc.strToDate(enterDate);
+		reExitDate = useFnc.strToDate(exitDate);
+
+		// 임시 방 배열 생성 후 전체를 true값으로 변경
+		boolean[][] roomData = new boolean[5][5]; //예약계획 있으면 true
+		LocalDate tmpCal = useFnc.strToDate(enterDate);	
+		while(true) {
+			if(manager.getDayRoomData().containsKey(tmpCal)) {				
+				for (int j = 0; j < manager.getDayRoomData().get(tmpCal).getRoomArr().length; j++) {
+					for (int j2 = 0; j2 < manager.getDayRoomData().get(tmpCal).getRoomArr()[j].length; j2++) {
+						if(manager.getDayRoomData().get(tmpCal).getRoomArr()[j][j2]) {
+							roomData[j][j2] = true;
+						}
+					}
+				}
+			}else {
+				manager.getDayRoomData().put(tmpCal, new Day());
+			}
+
+			if(tmpCal.isEqual(reExitDate)) {
+				break;
+			}else {
+				tmpCal = tmpCal.plusDays(1);
+			}
+		}
+		System.out.println("현재 선택할 수 있는 방은");
+		for (int i = 0; i < roomData.length; i++) {
+			for (int j = 0; j < roomData[i].length; j++) {
+				if(!roomData[i][j]) {
+					System.out.print(i+1);
+					if(i<9) {
+						System.out.print("0");
+					}
+					System.out.print((j+1)+"호 ");
+				}
+			}
+			System.out.println();
+		}
+		System.out.println("입니다.");
+		int choiceRoom;
+		String strChoiceRoom;
+		while(true) {
+			strChoiceRoom = useFnc.customPtrn("방 선택: ", "[1-5]0[1-5]", "호수를 확인해주세요.");
+			if(!roomData[(Integer.parseInt(strChoiceRoom)/100)-1][(Integer.parseInt(strChoiceRoom)%100)-1]) {
+				choiceRoom = Integer.parseInt(strChoiceRoom);
+				break;							
+			}else {
+				System.out.println("호수를 확인해주세요.");							
+			}		
+		}
+//		while(true) {
+//			System.out.print("방 선택: ");
+//			String room = sc.next();
+//			if(Pattern.matches("[1-5]0[1-5]", room)) {
+//				if(!roomData[(Integer.parseInt(room)/100)-1][(Integer.parseInt(room)%100)-1]) {
+//					choiceRoom = Integer.parseInt(room);
+//					break;							
+//				}else {
+//					System.out.println("호수를 확인해주세요.");							
+//				}
+//			}else {
+//				System.out.println("호수를 확인해주세요.");
+//			}
+//		}
+		//결제 구현필요
+		System.out.println("ㅇㅇㅇ원입니다 결제하시겠습니까?");
+		///////////////////
+		manager.getCustomerData().get(phoneNum).getPet().add(new Pet(petName, reEnterDate, reExitDate, choiceRoom));
+		tmpCal = useFnc.strToDate(enterDate);
+		int num1 = choiceRoom/100;
+		int num2 = choiceRoom%100;
+		while(true) {
+			if(!manager.getDayRoomData().containsKey(tmpCal)) {
+				manager.getDayRoomData().put(tmpCal, new Day());
+			}
+			manager.getDayRoomData().get(tmpCal).getRoomArr()[num1-1][num2-1] = true;
+
+			if(tmpCal.isEqual(reExitDate)) {
+				break;
+			}else {
+				tmpCal = tmpCal.plusDays(1);
+			}
+		}
+		System.out.println("예약완료");
+	}
+	public void cusLookup(int phoneNum) {
+		System.out.println("---예약조회---");
+		System.out.println(phoneNum+"님의 예약 내역은 다음과 같습니다.");
+		System.out.println("펫이름\t방번호\t입실날짜\t퇴실날짜");
+		Iterator<Pet> itr = manager.getCustomerData().get(phoneNum).getPet().iterator();
+		while(itr.hasNext()) {
+			Pet tmpPet = itr.next();
+			System.out.print(tmpPet.getPetName()+"\t");
+			System.out.print(tmpPet.getRoomNum()+"호\t");
+			System.out.print(useFnc.dateToStr(tmpPet.getEnterDate())+"\t\t");
+			System.out.println(useFnc.dateToStr(tmpPet.getExitDate()));
+		}
+	}
+	public void cusExtend(int phoneNum) {
+		Pet extendPet = null;
+		System.out.println("---기간연장---");
+		System.out.println(phoneNum+"님의 예약 내역은 다음과 같습니다.");
+		System.out.println("펫이름\t방번호\t입실날짜\t퇴실날짜");
+		Iterator<Pet> itr = manager.getCustomerData().get(phoneNum).getPet().iterator();
+		while(itr.hasNext()) {
+			Pet tmpPet = itr.next();
+			System.out.print(tmpPet.getPetName()+"\t");
+			System.out.print(tmpPet.getRoomNum()+"호\t");
+			System.out.print(useFnc.dateToStr(tmpPet.getEnterDate())+"\t\t");
+			System.out.println(useFnc.dateToStr(tmpPet.getExitDate()));
+		}
+		System.out.println("원하시는 펫의 이름을 입력해주세요.");
+		System.out.print("입력:");
+		String extendPetName = sc.next();
+		itr = manager.getCustomerData().get(phoneNum).getPet().iterator();
+		while(itr.hasNext()) {
+			Pet tmpPet = itr.next();
+			if(tmpPet.getPetName().equals(extendPetName)) {
+				extendPet = tmpPet;
+			}
+		}
+		if(extendPet != null) { //해당값 있을 때
+			System.out.print(extendPet.getPetName()+"의 현재 예약기간은 ");
+			System.out.print(useFnc.dateToStr(extendPet.getEnterDate())+" ~ ");
+			System.out.print(useFnc.dateToStr(extendPet.getExitDate()));
+			System.out.println(" 입니다.");
+
+			int extendNum;
+			while(true) {
+				System.out.print("연장하실 일수 [1 ~ 9]: ");//////////////숫자만 입력
+				String extendNum2 = sc.next();
+				if(Pattern.matches("\\d", extendNum2)) {
+					extendNum = Integer.parseInt(extendNum2);
+					break;
+				}
+			}
+			LocalDate endDate = extendPet.getExitDate().plusDays(extendNum);
+			LocalDate tmpDate = extendPet.getExitDate().plusDays(1);
+			boolean [][] roomData = new boolean[5][5];
+			while(true) {
+				if(manager.getDayRoomData().containsKey(tmpDate)) {
+					for (int i = 0; i < manager.getDayRoomData().get(tmpDate).getRoomArr().length; i++) {
+						for (int j = 0; j < manager.getDayRoomData().get(tmpDate).getRoomArr()[i].length; j++) {
+							if(manager.getDayRoomData().get(tmpDate).getRoomArr()[i][j]) {
+								roomData[i][j] = true;
+							}
+						}
+					}
+				}else {
+					manager.getDayRoomData().put(tmpDate, new Day());
+				}
+
+				if(tmpDate.isEqual(endDate)) {
+					break;
+				}else {
+					tmpDate = tmpDate.plusDays(1);
+				}
+			}
+			int changeRoom = extendPet.getRoomNum();
+			int nowRoom1 = extendPet.getRoomNum()/100;
+			int nowRoom2 = extendPet.getRoomNum()%100;
+			if(roomData[nowRoom1-1][nowRoom2-1]) {
+				System.out.println(extendPet.getRoomNum()+"호는 해당기간에 이미 예약되었습니다.");
+				System.out.println("다음 호 중에서 원하시는 방을 선택하세요.");
+				for (int i = 0; i < roomData.length; i++) {
+					for (int j = 0; j < roomData[i].length; j++) {
+						System.out.print(101+(i*100)+j+"호 ");
+					}
+					System.out.println();
+				}
+				while(true) {
+					System.out.print("방 선택: ");
+					String room = sc.next();
+					if(Pattern.matches("[1-5]0[1-5]", room)) {
+						if(!roomData[(Integer.parseInt(room)/100)-1][(Integer.parseInt(room)%100)-1]) {
+							changeRoom = Integer.parseInt(room);
+							break;
+						}else {
+							System.out.println("호수를 확인해주세요.");							
+						}
+					}else {
+						System.out.println("호수를 확인해주세요.");
+					}
+				}
+			}
+			//결제부터 구현
+			System.out.println("결제하시겠습니까? [Y / N]");
+			System.out.println("결제되었습니다.");
+
+			if(changeRoom == extendPet.getRoomNum()) { //방이동없을시
+				LocalDate finalDate = extendPet.getExitDate().plusDays(1); //연장시작일
+				for (int i = 0; i < extendNum; i++) { //방 입실정보 넣기
+					manager.getDayRoomData().get(finalDate).getRoomArr()[nowRoom1-1][nowRoom2-1] = true;
+					finalDate = finalDate.plusDays(1);
+				}
+				extendPet.setExitDate(extendPet.getExitDate().plusDays(extendNum)); //해당펫의 퇴실날짜 연장
+				System.out.println("연장되었습니다.");
+			}else {//방이동하면
+				LocalDate finalDate = extendPet.getExitDate().plusDays(1); 
+				for (int i = 0; i < extendNum; i++) { //방 입실정보 넣기
+					manager.getDayRoomData().get(finalDate).getRoomArr()[(changeRoom/100)-1][(changeRoom%100)-1] = true;
+					finalDate = finalDate.plusDays(1);
+				}
+				//펫 새로넣기
+				manager.getCustomerData().get(phoneNum).getPet().add(new Pet(extendPet.getPetName(), extendPet.getExitDate().plusDays(1), endDate, changeRoom));
+			}
+			System.out.println("연장완료되었습니다.");
+
+
+		}
+
+	}
+
+
+
+
+}

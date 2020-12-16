@@ -1,0 +1,42 @@
+package View;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class CustomerMenuView extends MainView{
+	public JButton button1, button2, button3, button4, button5;
+	public CustomerMenuView() {
+		super();
+		setTitle("고객 메뉴");
+		
+		JPanel imagePn = new JPanel();
+		ImageIcon image = new ImageIcon("./Image/고객메뉴이미지.png");
+		JLabel imageLb = new JLabel(image);
+		imagePn.add(imageLb, BorderLayout.NORTH);
+		
+		JPanel buttonPn = new JPanel(new GridLayout(2, 3));
+		button1 = new JButton("호텔 예약");
+		buttonPn.add(button1);
+		button2 = new JButton("예약 조회");
+		buttonPn.add(button2);
+		button3 = new JButton("예약 수정");
+		buttonPn.add(button3);
+		button4 = new JButton("예약 취소");
+		buttonPn.add(button4);
+		
+		JPanel exitBtPn = new JPanel(new GridLayout(1,1));
+		button5 = new JButton("나가기");
+		exitBtPn.add(button5);
+		
+		add(imagePn);
+		add(buttonPn);
+		add(exitBtPn);
+		
+		setVisible(true);
+	}
+}

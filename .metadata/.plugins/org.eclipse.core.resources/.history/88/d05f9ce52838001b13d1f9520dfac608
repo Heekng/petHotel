@@ -1,0 +1,11 @@
+package threadInfo;
+
+public class ThreadInfoTest {
+
+}
+class Music extends Thread {
+	
+}
+class Movie extends Thread {
+	
+}

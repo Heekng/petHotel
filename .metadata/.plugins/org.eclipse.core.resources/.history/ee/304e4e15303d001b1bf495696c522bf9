@@ -1,0 +1,15 @@
+package View;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class Tmp extends MainView{
+	public Tmp() {
+		
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel();
+		
+		
+	}
+
+}

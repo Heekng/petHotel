@@ -1,0 +1,8 @@
+package threadInfo;
+
+
+public class ThreadInfoEx {
+	public static void main(String[] args) {
+		
+	}
+}

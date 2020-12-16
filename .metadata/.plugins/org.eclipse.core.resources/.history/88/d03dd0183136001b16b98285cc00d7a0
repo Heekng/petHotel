@@ -1,0 +1,64 @@
+package DAO;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
+
+public class useFnc {
+	static Scanner sc = new Scanner(System.in);
+	static int numCheck(String num) { //숫자인지 확인하고 길이가 n인지 확인하는 메소드
+		//숫자이면 숫자를 리턴, 숫자가 아니면 -1리턴
+		boolean sw = true;
+		for (int i = 0; i < num.length(); i++) {
+			if(Character.isDigit(num.charAt(i))) {
+				continue;
+			}else {
+				sw = false;
+				break;
+			}
+		}
+		if(!sw) return -1;//숫자가 아니다.
+		else return Integer.parseInt(num);
+	}
+	
+	static int numCheck(String num, int n) { //길이가 n만큼인지 확인하는 함수
+		if(numCheck(num) != -1) { //숫자이면
+			if(num.length() == n) return numCheck(num);
+			else return -2; //길이가 맞지 않으면 -2리턴
+		}else {
+			return -1;
+		}
+	}
+	static int inputNum(int n) {
+		while(true) {
+			int num = numCheck(sc.next(), n);
+			if(num == -1 || num == -2) {
+				System.out.println("숫자"+n+"자리로 입력해주세요.");
+				System.out.print("입력: ");
+			}else {
+				return num;
+			}
+		}		
+	}
+	static LocalDate strToDate(String date) {
+		int year = 2000+Integer.parseInt(date.substring(0, 2));
+		int month = Integer.parseInt(date.substring(2, 4))-1;
+		int day = Integer.parseInt(date.substring(4, 6));
+		LocalDate reDate = LocalDate.of(year, month, day);
+		return reDate;
+	}
+	static String dateToStr(LocalDate date) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyMMdd");
+		String before = date.format(dateTimeFormatter);
+		int month = Integer.parseInt(before.substring(2, 4))+1;
+		String newMonth;
+		if(month < 10) {
+			newMonth = String.valueOf(month);
+		}else{
+			
+		}
+		String newStr = before.substring(0, 2);
+		return date.format(dateTimeFormatter);
+	}
+	
+}

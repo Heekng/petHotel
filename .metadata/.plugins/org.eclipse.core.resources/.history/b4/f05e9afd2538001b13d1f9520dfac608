@@ -1,0 +1,35 @@
+package threadInfo;
+
+import java.util.Map;
+import java.util.Set;
+
+public class ThreadInfoEx {
+	public static void main(String[] args) {
+		AutoSaveThread autoSaveThread = new AutoSaveThread();
+		autoSaveThread.setName("AutoSaveThread"); //스레드 이름 만들기
+		autoSaveThread.setDaemon(true); //데몬 스레드 만들기
+		//스레드를 동작시키기 RUNNABLE 상태로 만들기
+		autoSaveThread.start();
+		
+		Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();
+		Set<Thread> threads = map.keySet();
+	}
+}
+
+class AutoSaveThread extends Thread{
+	public void save() {
+		System.out.println("작업 내용을 저장함");
+	}
+	
+	@Override
+	public void run() {
+		while(true) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				break;
+			}
+			save();
+		}
+	}
+}

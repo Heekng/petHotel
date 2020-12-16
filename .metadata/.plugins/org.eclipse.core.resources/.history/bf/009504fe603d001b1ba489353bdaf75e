@@ -1,0 +1,29 @@
+package DTO;
+
+import java.util.HashSet;
+
+public class Customer {//°í°´
+	private int password; //4ÀÚ¸® ºñ¹Ð¹øÈ£
+	private HashSet<Pet> pet = new HashSet<>(); //°í°´º° Æê set
+	private HashSet<Pet> exitPet = new HashSet<>(); //Åð½ÇÇÑ Æê
+	
+	public int getPassword() {
+		return password;
+	}
+	public void setPassword(int password) {
+		this.password = password;
+	}
+	public HashSet<Pet> getPet() {
+		return pet;
+	}
+	public void setPet(HashSet<Pet> pet) {
+		this.pet = pet;
+	}
+	public HashSet<Pet> getExitPet() {
+		return exitPet;
+	}
+	public void setExitPet(HashSet<Pet> exitPet) {
+		this.exitPet = exitPet;
+	}
+	
+}

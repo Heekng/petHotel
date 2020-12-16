@@ -1,0 +1,66 @@
+package View;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+public class DeletePetView extends MainView{
+	public String data[][] = new String[50][6];
+	public int phoneNum;
+	public JButton backBt, numBt, allBt;
+	public JPanel listPn;
+	public JTextField numTf;
+	JTable table;
+	JScrollPane sp;
+	String title[] = {"전화번호", "펫이름", "방번호", "입실날짜", "퇴실날짜"};
+	
+	public DeletePetView() {
+		setTitle("일괄 퇴실");
+		JPanel choicePn = new JPanel();
+		choicePn.setLayout(new FlowLayout());
+		
+		numTf = new JTextField(8);
+		choicePn.add(numTf);
+		numBt = new JButton("전화번호 조회");
+		choicePn.add(numBt);
+		allBt = new JButton("전체 조회");
+		choicePn.add(allBt);
+		
+		listPn = new JPanel();
+		table = new JTable(data, title);
+		table.setRowHeight(19);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		sp = new JScrollPane(table);
+		listPn.add(sp);
+		
+		JPanel buttonPn = new JPanel();
+		backBt = new JButton("뒤로 가기");
+		buttonPn.add(backBt);
+		
+		
+		add(choicePn, BorderLayout.PAGE_START);
+		add(listPn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+	public static void main(String[] args) {
+		new DeletePetView();
+	}
+}

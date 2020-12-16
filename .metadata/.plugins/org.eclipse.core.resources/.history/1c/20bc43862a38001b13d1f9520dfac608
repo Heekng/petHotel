@@ -1,0 +1,50 @@
+package threadInfo;
+
+public class ThreadInfoTest {
+	public static void main(String[] args) {
+		Test music = new Test("음악");
+		Test movie = new Test("영화");
+		
+		music.start();
+		movie.start();
+	}
+}
+class Test extends Thread {
+	String name;
+	public Test(String name) {
+		this.name = name;
+	}
+	public synchronized void musicStart() {
+		System.out.println("음악을 재생합니다.");
+	}
+	@Override
+	public void run() {
+		while(true) {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			musicStart();
+		}
+	}
+}
+//class Movie extends Thread {
+//	public void movieStart() {
+//		System.out.println("동영상을 재생합니다.");
+//	}
+//	@Override
+//	public void run() {
+//		while(true) {
+//			try {
+//				Thread.sleep(500);
+//			} catch (InterruptedException e) {
+//				
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			movieStart();
+//		}
+//	}
+//}

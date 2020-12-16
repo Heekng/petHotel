@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;p01.NullCheck_02&apos; to &apos;NullPointEx_02&apos;&#x0D;&#x0A;- Original project: &apos;Day04&apos;&#x0D;&#x0A;- Original element: &apos;p01.NullCheck_02&apos;&#x0D;&#x0A;- Renamed element: &apos;p01.NullPointEx_02&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;NullCheck_02&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;p01{NullCheck_02.java[NullCheck_02" matchStrategy="1" name="NullPointEx_02" qualified="false" references="true" similarDeclarations="false" stamp="1604543374247" textual="false" version="1.0"/>
+</session>

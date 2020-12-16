@@ -1,0 +1,26 @@
+package View;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class Tmp extends MainView{
+	public Tmp() {
+		
+		JPanel panel = new JPanel();
+		ImageIcon image = new ImageIcon("./Image/키오스크메인.png");
+		JLabel label = new JLabel(image);
+		panel.add(label);
+		
+		
+		add(panel);
+		System.out.println(panel.getPreferredSize().height);
+		setVisible(true);
+		
+		
+	}
+	public static void main(String[] args) {
+		new Tmp();
+		
+	}
+}

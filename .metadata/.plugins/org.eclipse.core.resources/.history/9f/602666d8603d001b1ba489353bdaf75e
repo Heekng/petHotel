@@ -1,0 +1,22 @@
+package View;
+
+import java.io.IOException;
+
+import DAO.Business;
+import DAO.SaveData;
+
+public class View {
+	public static void main(String[] args) {
+		Business business = new Business();
+		business.start();
+		try {
+			SaveData.returnData();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

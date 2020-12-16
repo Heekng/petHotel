@@ -1,0 +1,68 @@
+package View;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+public class CustomerLoginView extends MainView{
+	public JButton loginBt, exitBt, joinBt;
+	public JTextField loginTf;
+	public JPasswordField passwordPf;
+	public CustomerLoginView() {
+		setTitle("고객 로그인");
+		getContentPane().setBackground(Color.WHITE);
+		
+		
+		
+		JPanel loginPn = new JPanel();
+		JLabel loginLb = new JLabel("전화번호: 010");
+		loginPn.add(loginLb);
+		loginTf = new JTextField(8);
+		loginTf.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(loginTf.getText().length() >= 8) e.consume();
+			}
+		});
+		loginPn.add(loginTf);
+		
+		JPanel passwordPn = new JPanel();
+		JLabel passwordLb = new JLabel("비밀번호");
+		passwordPn.add(passwordLb);
+		passwordPf = new JPasswordField(8);
+		passwordPn.add(passwordPf);
+		
+		JPanel buttonPn = new JPanel();
+		buttonPn.setLayout(new FlowLayout());
+		loginBt = new JButton("로그인");
+		buttonPn.add(loginBt);
+		joinBt = new JButton("신규가입");
+		buttonPn.add(joinBt);
+		exitBt = new JButton("취소");
+		buttonPn.add(exitBt);
+		
+		add(loginPn);
+		add(passwordPn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+	public static void main(String[] args) {
+		new CustomerLoginView();
+	}
+}

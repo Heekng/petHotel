@@ -1,0 +1,92 @@
+package DAO;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+public class useFnc {
+	static Scanner sc = new Scanner(System.in);
+	static int numCheck(String num) { //숫자인지 확인하고 길이가 n인지 확인하는 메소드
+		//숫자이면 숫자를 리턴, 숫자가 아니면 -1리턴
+		boolean sw = true;
+		for (int i = 0; i < num.length(); i++) {
+			if(Character.isDigit(num.charAt(i))) {
+				continue;
+			}else {
+				sw = false;
+				break;
+			}
+		}
+		if(!sw) return -1;//숫자가 아니다.
+		else return Integer.parseInt(num);
+	}
+	/*
+	static int numCheck(String num, int n) { //길이가 n만큼인지 확인하는 함수
+		if(numCheck(num) != -1) { //숫자이면
+			if(num.length() == n) return numCheck(num);
+			else return -2; //길이가 맞지 않으면 -2리턴
+		}else {
+			return -1;
+		}
+	}
+	static int inputNum(int n) {
+		while(true) {
+			int num = numCheck(sc.next(), n);
+			if(num == -1 || num == -2) {
+				System.out.println("숫자"+n+"자리로 입력해주세요.");
+				System.out.print("입력: ");
+			}else {
+				return num;
+			}
+		}		
+	}
+	*/
+	static LocalDate strToDate(String date) {
+		int year = 2000+Integer.parseInt(date.substring(0, 2));
+		int month = Integer.parseInt(date.substring(2, 4));
+		int day = Integer.parseInt(date.substring(4, 6));
+		LocalDate reDate = LocalDate.of(year, month, day);
+		return reDate;
+	}
+	public static String dateToStr(LocalDate date) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyMMdd");
+		String before = date.format(dateTimeFormatter);
+		int month = Integer.parseInt(before.substring(2, 4));
+		String newMonth;
+		if(month < 10) {
+			newMonth = "0"+String.valueOf(month);
+		}else{
+			newMonth = String.valueOf(month);
+		}
+		String newStr = before.substring(0, 2)+newMonth+before.substring(4, 6);
+		return newStr;
+	}
+	static String customPtrn(String Guid, String pattern, String caution) {
+		String getTxt;
+		System.out.print(Guid);//////////////숫자만 입력
+		while(true) {
+			getTxt = sc.next();
+			if(Pattern.matches(pattern, getTxt)) {
+				break;
+			}else {
+				System.out.print(caution);
+			}
+		}
+		return getTxt;
+	}
+	public static boolean stringPtCheck(String text, String pattern) {
+		
+		return false;
+	}
+	
+	static boolean dayCheck(LocalDate endDate, int num) {
+		LocalDate exDate = endDate.minusDays(num);
+		LocalDate nowDate = LocalDate.now();
+		if(exDate.isBefore(nowDate) || exDate.isEqual(nowDate)) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+}

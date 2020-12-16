@@ -1,0 +1,36 @@
+package View;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class cusLookupView extends MainView{
+	
+	
+	
+	public cusLookupView() {
+		setTitle("고객 조회");
+		String title[] = {"펫이름", "방번호", "입실날짜", "퇴실날짜"};
+		String data[][] = new String[10][4];
+				
+		JPanel listPn = new JPanel();
+		
+		JTable table = new JTable(data, title);
+		table.setRowHeight(19);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		JScrollPane sp = new JScrollPane(table);		listPn.add(sp);
+		
+		add(listPn);
+		
+		setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		new cusLookupView();
+	}
+}

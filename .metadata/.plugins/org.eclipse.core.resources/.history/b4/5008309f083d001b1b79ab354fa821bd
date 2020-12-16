@@ -1,0 +1,54 @@
+package View;
+
+import java.awt.Dimension;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class AllExitPetView extends MainView{
+	JPanel listPn;
+	ArrayList<String[]> getData;
+	public AllExitPetView(ArrayList<String[]> data) {
+		setTitle("퇴실내역 조회");
+		String title[] = {"고객번호", "펫이름", "방번호", "입실날짜", "퇴실날짜"};
+		
+		getData = data;
+		
+		String[][] arr = getData.toArray(new String[getData.size()][5]);
+		
+		JPanel topPn = new JPanel();
+		JLabel topLb = new JLabel("지금까지의 퇴실내역입니다.");
+		topPn.add(topLb);
+		
+		JPanel choicePn = new JPanel();
+		
+		
+		listPn = new JPanel();
+		DefaultTableModel dtm = new DefaultTableModel(arr, title);
+		JTable table = new JTable(dtm);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		table.setRowHeight(45);
+		JScrollPane sp = new JScrollPane(table);
+		sp.setPreferredSize(new Dimension(390, 500));
+		listPn.add(sp);
+		
+		JPanel buttonPn = new JPanel();
+		JButton exitBt = new JButton("나가기");
+		buttonPn.add(exitBt);
+		
+		add(topPn);
+		add(listPn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+	
+}

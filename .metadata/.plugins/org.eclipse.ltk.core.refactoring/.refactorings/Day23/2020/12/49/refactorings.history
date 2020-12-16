@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;Wrapper.WrapperEx&apos; to &apos;WrapperEx_01&apos;&#x0D;&#x0A;- Original project: &apos;Day23&apos;&#x0D;&#x0A;- Original element: &apos;Wrapper.WrapperEx&apos;&#x0D;&#x0A;- Renamed element: &apos;Wrapper.WrapperEx_01&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;WrapperEx&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;Wrapper{WrapperEx.java[WrapperEx" matchStrategy="1" name="WrapperEx_01" qualified="false" references="true" similarDeclarations="false" stamp="1606872479574" textual="false" version="1.0"/>
+</session>

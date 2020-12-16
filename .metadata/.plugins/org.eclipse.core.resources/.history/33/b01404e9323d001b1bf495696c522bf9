@@ -1,0 +1,810 @@
+package DAO;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+
+import DTO.Customer;
+import DTO.Day;
+import DTO.Manager;
+import DTO.Pet;
+import View.AllExitPetView;
+import View.CalandarView;
+import View.ChangePasswordView;
+import View.ChangePetView;
+import View.ChoiceChangeView;
+import View.CusAppointmentView;
+import View.CusCancleView;
+import View.CustomerLoginView;
+import View.CustomerMenuView;
+import View.ExitPetView;
+import View.LookUpView;
+import View.ManagerMenuView;
+import View.RoomView;
+import View.CusExtendView;
+import View.CusLookupView;
+import View.startView;
+import View.startView;
+
+public class Business {
+	
+	Scanner sc = new Scanner(System.in);	
+	String room;
+	LocalDate tmpCal;
+	Manager manager = new Manager();
+	startView mainView;
+	CustomerMenuView customerMenuView;
+	ManagerMenuView managerMenuView;
+	
+	public void start() {
+		mainView = new startView();
+		mainView.customerBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainView.setVisible(false);
+				customerLogin();
+			}
+		});
+		mainView.managerBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				managerLogin();
+			}
+		});
+	}
+
+	public void customerLogin() { //고객로그인창
+		CustomerLoginView customerLoginView = new CustomerLoginView();
+
+		customerLoginView.loginBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int rePhoneNum, rePassword;
+				String phoneNum = customerLoginView.loginTf.getText();
+				String password = String.valueOf(customerLoginView.passwordPf.getPassword());
+				if(Pattern.matches("\\d{8}", phoneNum)){//전화번호8자리확인
+					rePhoneNum = Integer.parseInt(phoneNum);
+					if(manager.getCustomerData().containsKey(rePhoneNum)) { //해당 번호가 존재하면?
+						if(Pattern.matches("\\d{4}", password)) {
+							rePassword = Integer.parseInt(password);
+							if(manager.getCustomerData().get(rePhoneNum).getPassword() == rePassword) {
+								//로그인성공
+								customerLoginView.dispose();
+								customerMenu(rePhoneNum);
+							}else {
+								JOptionPane.showMessageDialog(null, "비밀번호가 틀렸습니다.");
+							}							
+						}else {
+							JOptionPane.showMessageDialog(null, "비밀번호는 4자리 숫자로 입력해주세요.");
+						}
+					}else {
+						JOptionPane.showMessageDialog(null, "등록되지 않은 번호입니다. 신규가입해주세요.");
+					}
+				}else {
+					JOptionPane.showMessageDialog(null, "전화번호는 010을 제외한 8자리 숫자로 입력해주세요.");
+				}
+			}
+		});
+
+		customerLoginView.exitBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				customerLoginView.dispose();
+				mainView.setVisible(true);
+			}
+		});
+		customerLoginView.joinBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int rePhoneNum, rePassword;
+				String phoneNum = customerLoginView.loginTf.getText();
+				String password = String.valueOf(customerLoginView.passwordPf.getPassword());
+				if(Pattern.matches("\\d{8}", phoneNum)){
+					rePhoneNum = Integer.parseInt(phoneNum);
+					if(manager.getCustomerData().containsKey(rePhoneNum)) { //해당 번호가 존재하면?
+						JOptionPane.showMessageDialog(null, "이미 가입된 번호입니다.");
+					}else {
+						if(Pattern.matches("\\d{4}", password)) {
+							rePassword = Integer.parseInt(password);
+							Customer customer = new Customer();
+							customer.setPassword(rePassword);
+							manager.getCustomerData().put(rePhoneNum, customer);
+							JOptionPane.showMessageDialog(null, "신규가입 완료되었습니다.\n자동 로그인합니다.");
+							customerLoginView.dispose();
+							customerMenu(rePhoneNum);
+						}else {
+							JOptionPane.showMessageDialog(null, "비밀번호는 4자리 숫자로 입력해주세요.");
+						}
+					}
+				}else {
+					JOptionPane.showMessageDialog(null, "전화번호는 010을 제외한 8자리 숫자로 입력해주세요.");
+				}
+			}
+		});
+	}
+
+	public void customerMenu(int phoneNum) {//고객 메뉴
+		customerMenuView = new CustomerMenuView();
+		customerMenuView.button1.addActionListener(new ActionListener() {//호텔 예약
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				customerMenuView.setVisible(false);
+				cusAppointment(phoneNum);
+			}
+		});
+		customerMenuView.button2.addActionListener(new ActionListener() { //예약 조회
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				customerMenuView.setVisible(false);
+				cusLookup(phoneNum);
+			}
+		});
+		customerMenuView.button3.addActionListener(new ActionListener() { //기간 연장
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				customerMenuView.setVisible(false);
+				cusExtend(phoneNum);
+			}
+		});
+		customerMenuView.button4.addActionListener(new ActionListener() { //예약 취소
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				customerMenuView.setVisible(false);
+				cusCancle(phoneNum);
+			}
+		});
+		customerMenuView.button5.addActionListener(new ActionListener() { //나가기
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				customerMenuView.dispose();
+				mainView.setVisible(true);
+			}
+		});
+		customerMenuView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				customerMenuView.dispose();
+				mainView.setVisible(true);
+			}
+		});
+	}
+
+	public void cusAppointment(int phoneNum) { //호텔 예약
+		
+		CusAppointmentView cusAppointmentView = new CusAppointmentView();
+		cusAppointmentView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				cusAppointmentView.dispose();
+				customerMenuView.setVisible(true);
+			}
+		});
+		cusAppointmentView.exitDateBt.addActionListener(new ActionListener() { //퇴실날짜선택버튼
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		cusAppointmentView.exitBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cusAppointmentView.dispose();
+				customerMenuView.setVisible(true);
+			}
+		});
+		cusAppointmentView.inputBt.addActionListener(new ActionListener() {
+			int i;
+			int j;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				String petName, enterDate, exitDate;
+				LocalDate reEnterDate, reExitDate;
+				petName = cusAppointmentView.petNameTf.getText();
+				enterDate = cusAppointmentView.enterDateTf.getText();
+				exitDate = cusAppointmentView.exitDateTf.getText();
+				if(petName.length()==0 || !Pattern.matches("\\d{6}", enterDate) || !Pattern.matches("\\d{6}", exitDate)) {
+					JOptionPane.showMessageDialog(null, "입력정보 확인후 다시 시도해주세요.");
+					return;
+				}
+				reEnterDate = useFnc.strToDate(enterDate);
+				reExitDate = useFnc.strToDate(exitDate);
+				//임시 방 배열 생성 후 전체를 true값으로 변경
+				boolean[][] roomData = new boolean[5][5]; //예약계획 있으면 true
+				tmpCal = useFnc.strToDate(enterDate);
+				while(true) {
+					if(manager.getDayRoomData().containsKey(tmpCal)) {				
+						for (int j = 0; j < manager.getDayRoomData().get(tmpCal).getRoomArr().length; j++) {
+							for (int j2 = 0; j2 < manager.getDayRoomData().get(tmpCal).getRoomArr()[j].length; j2++) {
+								if(manager.getDayRoomData().get(tmpCal).getRoomArr()[j][j2]) {
+									roomData[j][j2] = true;
+								}
+							}
+						}
+					}else {
+						manager.getDayRoomData().put(tmpCal, new Day());
+					}
+		
+					if(tmpCal.isEqual(reExitDate)) {
+						break;
+					}else {
+						tmpCal = tmpCal.plusDays(1);
+					}
+				}
+				//방 선택 구현
+				RoomView roomView = new RoomView(roomData);
+				
+				for (i = 0; i < roomData.length; i++) {
+					for (j = 0; j < roomData[i].length; j++) {
+						roomView.roomBtn[i][j].addActionListener(new ActionListener() {							
+							int tmpA = i;
+							int tmpB = j;
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								int choiceRoom = 101+tmpA*100 + tmpB;
+								roomView.dispose();
+								//결제 구현필요
+								JOptionPane.showMessageDialog(null, "결제하시겠습니까?");
+								///////////////////
+								manager.getCustomerData().get(phoneNum).getPet().add(new Pet(petName, reEnterDate, reExitDate, choiceRoom));
+								tmpCal = useFnc.strToDate(enterDate);
+								int num1 = choiceRoom/100;
+								int num2 = choiceRoom%100;
+								while(true) {
+									if(!manager.getDayRoomData().containsKey(tmpCal)) {
+										manager.getDayRoomData().put(tmpCal, new Day());
+									}
+									manager.getDayRoomData().get(tmpCal).getRoomArr()[num1-1][num2-1] = true;
+									
+									if(tmpCal.isEqual(reExitDate)) {
+										break;
+									}else {
+										tmpCal = tmpCal.plusDays(1);
+									}
+								}
+								JOptionPane.showMessageDialog(null, choiceRoom+"호 예약완료");
+							}
+						});
+					}
+				}
+			}
+		});
+		
+		
+	}
+	public void cusLookup(int phoneNum) { //예약조회
+		ArrayList<String[]> arr = new ArrayList<>();
+		Iterator<Pet> itr = manager.getCustomerData().get(phoneNum).getPet().iterator();
+		while(itr.hasNext()) {
+			Pet tmpPet = itr.next();
+			String [] strArr = {tmpPet.getPetName(), ""+tmpPet.getRoomNum(), useFnc.dateToStr(tmpPet.getEnterDate()), useFnc.dateToStr(tmpPet.getExitDate())};
+			arr.add(strArr);
+		}
+		CusLookupView cusLookupView = new CusLookupView(arr, phoneNum);
+		cusLookupView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				cusLookupView.dispose();
+				customerMenuView.setVisible(true);
+			}
+		});
+		cusLookupView.backBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cusLookupView.dispose();
+				customerMenuView.setVisible(true);
+			}
+		});
+	}
+	public void cusExtend(int phoneNum) { //예약연장
+		Pet myPetList [] = new Pet [manager.getCustomerData().get(phoneNum).getPet().size()];
+		int cnt = 0;
+		ArrayList<String[]> arr = new ArrayList<>();
+		Iterator<Pet> itr = manager.getCustomerData().get(phoneNum).getPet().iterator();
+		while(itr.hasNext()) {
+			Pet tmpPet = itr.next();
+			String [] strArr = {tmpPet.getPetName(), ""+tmpPet.getRoomNum(), useFnc.dateToStr(tmpPet.getEnterDate()), useFnc.dateToStr(tmpPet.getExitDate())};
+			myPetList[cnt++] = tmpPet;
+			arr.add(strArr);
+		}
+		CusExtendView cusExtendView = new CusExtendView(arr, phoneNum);
+		for (int i = 0; i < arr.size(); i++) {
+			int a = i;
+			cusExtendView.midButton[i].addActionListener(new ActionListener() {
+				int changeRoom;
+				int i2, j2;
+				int b = a;
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Pet extendPet = myPetList[b];
+					
+					String extendNumE = null;
+					String arr [] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}; 
+					extendNumE = (String) JOptionPane.showInputDialog(null, "연장할 일수를 선택하세요.", "기간연장",
+							JOptionPane.INFORMATION_MESSAGE, null, arr, arr[0]);
+					if(extendNumE != null) { //값입력받았을때
+						int extendNum = Integer.parseInt(extendNumE);
+						LocalDate endDate = extendPet.getExitDate().plusDays(extendNum);
+						LocalDate tmpDate = extendPet.getExitDate().plusDays(1);
+						boolean [][] roomData = new boolean[5][5];
+						while(true) {
+							if(manager.getDayRoomData().containsKey(tmpDate)) {
+								for (int i = 0; i < manager.getDayRoomData().get(tmpDate).getRoomArr().length; i++) {
+									for (int j = 0; j < manager.getDayRoomData().get(tmpDate).getRoomArr()[i].length; j++) {
+										if(manager.getDayRoomData().get(tmpDate).getRoomArr()[i][j]) {
+											roomData[i][j] = true;
+										}
+									}
+								}
+							}else {
+								manager.getDayRoomData().put(tmpDate, new Day());
+							}
+			
+							if(tmpDate.isEqual(endDate)) {
+								break;
+							}else {
+								tmpDate = tmpDate.plusDays(1);
+							}
+						}
+						//방체크
+						changeRoom = extendPet.getRoomNum();
+						int nowRoom1 = extendPet.getRoomNum()/100;
+						int nowRoom2 = extendPet.getRoomNum()%100;
+						if(roomData[nowRoom1-1][nowRoom2-1]) {
+							JOptionPane.showMessageDialog(null, extendPet.getRoomNum()+"호는 해당기간에 이미 예약되었습니다."
+									+ "\n다음 호 중에서 이동을 원하시는 방을 선택하세요.");
+							RoomView roomView = new RoomView(roomData);
+							for (i2 = 0; i2 < roomData.length; i2++) {
+								for (j2 = 0; j2 < roomData[i2].length; j2++) {
+									roomView.roomBtn[i2][j2].addActionListener(new ActionListener() {
+										int tmpA = i2;
+										int tmpB = j2;
+										@Override
+										public void actionPerformed(ActionEvent e) {
+											// TODO Auto-generated method stub
+											changeRoom = 101+tmpA*100+tmpB;
+											roomView.dispose();											
+										}
+									});
+								}
+							}
+						}
+						//방선택끝
+						int choice = JOptionPane.showConfirmDialog(null, "결제하시겠습니까?"
+								+ "","Confirm",JOptionPane.YES_NO_OPTION);
+						if(choice == 0) {///결제한다고하면
+							if(changeRoom == extendPet.getRoomNum()) { //방이동없을시
+								LocalDate finalDate = extendPet.getExitDate().plusDays(1); //연장시작일
+								for (int i = 0; i < extendNum; i++) { //방 입실정보 넣기
+									manager.getDayRoomData().get(finalDate).getRoomArr()[nowRoom1-1][nowRoom2-1] = true;
+									finalDate = finalDate.plusDays(1);
+								}
+								extendPet.setExitDate(extendPet.getExitDate().plusDays(extendNum)); //해당펫의 퇴실날짜 연장
+							}else {//방이동하면
+								LocalDate finalDate = extendPet.getExitDate().plusDays(1); 
+								for (int i = 0; i < extendNum; i++) { //방 입실정보 넣기
+									manager.getDayRoomData().get(finalDate).getRoomArr()[(changeRoom/100)-1][(changeRoom%100)-1] = true;
+									finalDate = finalDate.plusDays(1);
+								}
+								//펫 새로넣기
+								manager.getCustomerData().get(phoneNum).getPet().add(new Pet(extendPet.getPetName(), extendPet.getExitDate().plusDays(1), endDate, changeRoom));
+							}
+							JOptionPane.showMessageDialog(null, "연장되었습니다.");
+							cusExtendView.dispose();
+							customerMenuView.setVisible(true);
+						}else {
+							JOptionPane.showMessageDialog(null, "결제 취소되었습니다\n메뉴로 돌아갑니다.");
+							cusExtendView.dispose();
+							customerMenuView.setVisible(true);
+						}
+					}
+				}
+			});
+		}
+		cusExtendView.backBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				cusExtendView.dispose();
+				customerMenuView.setVisible(true);
+			}
+		});
+		cusExtendView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				cusExtendView.dispose();
+				customerMenuView.setVisible(true);
+			}
+		});
+		
+	}
+	public void cusCancle(int phoneNum) { //예약취소
+		Pet myPetList [] = new Pet [manager.getCustomerData().get(phoneNum).getPet().size()];
+		int cnt = 0;
+		ArrayList<String[]> arr = new ArrayList<>();
+		Iterator<Pet> itr = manager.getCustomerData().get(phoneNum).getPet().iterator();
+		while(itr.hasNext()) {
+			Pet tmpPet = itr.next();
+			String [] strArr = {tmpPet.getPetName(), ""+tmpPet.getRoomNum(), useFnc.dateToStr(tmpPet.getEnterDate()), useFnc.dateToStr(tmpPet.getExitDate())};
+			myPetList[cnt++] = tmpPet;
+			arr.add(strArr);
+		}
+		CusCancleView cusCancleView = new CusCancleView(arr, phoneNum);
+		for (int i = 0; i < arr.size(); i++) {
+			int a = i;
+			cusCancleView.midButton[i].addActionListener(new ActionListener() {
+				int i2, j2;
+				int b = a;
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Pet tmpPet = myPetList[b];
+					int choice = JOptionPane.showConfirmDialog(null, "결제 취소하시겠습니까?"
+							+ "","Confirm",JOptionPane.YES_NO_OPTION);
+					if(choice == 0) {//취소한다고하면
+						LocalDate tmpDate = tmpPet.getEnterDate();
+						while(true) { //입실정보삭제
+							manager.getDayRoomData().get(tmpDate).getRoomArr()[(tmpPet.getRoomNum()/100)-1][(tmpPet.getRoomNum()%100)-1] = false;
+							if(tmpDate.equals(tmpPet.getExitDate())) {
+								break;					
+							}
+							tmpDate = tmpDate.plusDays(1);
+						}
+						manager.getCustomerData().get(phoneNum).getPet().remove(tmpPet);
+						JOptionPane.showMessageDialog(null, "예약 취소되었습니다.");
+						cusCancleView.dispose();
+						customerMenuView.setVisible(true);
+					}else {//취소안하면
+						JOptionPane.showMessageDialog(null, "메뉴로 돌아갑니다.");
+						cusCancleView.dispose();
+						customerMenuView.setVisible(true);
+					}
+				}
+			});
+		}
+		cusCancleView.backBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				cusCancleView.dispose();
+				customerMenuView.setVisible(true);
+			}
+		});
+		cusCancleView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				cusCancleView.dispose();
+				customerMenuView.setVisible(true);
+			}
+		});
+	}
+
+	public void managerLogin() { //관리자 로그인
+		String inputPassword = JOptionPane.showInputDialog("비밀번호 입력");
+		if(manager.getPassword().equals(inputPassword)) {
+			mainView.setVisible(false);
+			managerMenu();
+		}else if(inputPassword == null){
+		}else {
+			JOptionPane.showMessageDialog(null, "비밀번호를 확인해주세요.");
+		}
+	}
+	public void managerMenu() {
+		managerMenuView = new ManagerMenuView();
+		managerMenuView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				managerMenuView.dispose();
+				mainView.setVisible(true);
+			}
+		});
+		managerMenuView.button1.addActionListener(new ActionListener() {//고객조회
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				managerMenuView.setVisible(false);
+				lookUp();
+			}
+		});
+		managerMenuView.button2.addActionListener(new ActionListener() { //펫 퇴실처리
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				managerMenuView.setVisible(false);
+				exitPet();
+			}
+		});
+		managerMenuView.button3.addActionListener(new ActionListener() { //수정/삭제
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				managerMenuView.setVisible(false);
+				changePet();
+			}
+		});
+		managerMenuView.button4.addActionListener(new ActionListener() { //비밀번호 변경
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				managerMenuView.setVisible(false);
+				changePassword();
+			}
+		});
+		managerMenuView.button5.addActionListener(new ActionListener() {//퇴실내역조회
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				managerMenuView.setVisible(false);
+				exitPetView();
+			}
+		});
+		managerMenuView.button6.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				managerMenuView.dispose();
+				mainView.setVisible(true);
+			}
+		});
+	}
+	public void lookUp() {
+		LookUpView lookUpView = new LookUpView();
+		lookUpView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				lookUpView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		lookUpView.backBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lookUpView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		lookUpView.numBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int phoneNum = Integer.parseInt(lookUpView.numTf.getText());
+				if(!manager.getCustomerData().containsKey(phoneNum)) {//해당번호없으면
+					JOptionPane.showMessageDialog(null, "조회하신 번호가 존재하지 않습니다.");
+					return;
+				}
+				lookUpView.data = new String [50][6];
+				Iterator<Pet> itr = manager.getCustomerData().get(phoneNum).getPet().iterator();
+				int num = 0;
+				while(itr.hasNext()) {
+					Pet tmpPet = itr.next();
+					String caution = "";
+					if(useFnc.dayCheck(tmpPet.getExitDate(), 3)) {
+						caution = "안내필요";
+					}
+					String [] arr = {""+phoneNum, 
+							tmpPet.getPetName(), 
+							""+tmpPet.getRoomNum(),
+							useFnc.dateToStr(tmpPet.getEnterDate()), 
+							useFnc.dateToStr(tmpPet.getExitDate()), 
+							caution};
+					lookUpView.data[num++] = arr;
+				}
+				lookUpView.review();
+			}
+		});
+		lookUpView.allBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				lookUpView.data = new String [50][6];
+				int num = 0;
+				for(Integer key : manager.getCustomerData().keySet()) {
+					Iterator<Pet> itr = manager.getCustomerData().get(key).getPet().iterator();
+					while(itr.hasNext()) {
+						Pet tmpPet = itr.next();
+						String caution = "";
+						if(useFnc.dayCheck(tmpPet.getExitDate(), 3)) {
+							caution = "안내필요";
+						}
+						String [] arr = {
+							""+key, 
+							tmpPet.getPetName(), 
+							""+tmpPet.getRoomNum(),
+							useFnc.dateToStr(tmpPet.getEnterDate()),
+							useFnc.dateToStr(tmpPet.getExitDate()),
+							caution
+						};
+						lookUpView.data[num++] = arr;
+					}
+				}
+				lookUpView.review();
+			}
+		});
+	}
+	public void changePet() {
+		ChangePetView changePetView = new ChangePetView();
+		changePetView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				changePetView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		changePetView.backBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				changePetView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		changePetView.searchBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(changePetView.phoneNumTf.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "전화번호를 입력해주세요.");
+					return;
+				}
+				String phoneNumText = changePetView.phoneNumTf.getText();
+				if(!Pattern.matches("\\d{8}", phoneNumText)) {
+					JOptionPane.showMessageDialog(null, "전화번호를 확인해주세요.");
+					return;
+				}
+				int phoneNum = Integer.parseInt(phoneNumText);
+				if(!manager.getCustomerData().containsKey(phoneNum)) {
+					JOptionPane.showMessageDialog(null, "등록되지 않은 전화번호입니다.");
+					return;
+				}
+				changePetView.userPhoneNum = phoneNum;
+				changePetView.review(manager.getCustomerData().get(phoneNum).getPet());
+			}
+		});
+		for (int i = 0; i < changePetView.midButton.length; i++) {
+			int num = i;
+			changePetView.midButton[i].addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Pet tmpPet = changePetView.petArr[num];
+					if(changePetView.changeRb.isSelected()) { //수정선택시
+						ChoiceChangeView choiceChangeView = new ChoiceChangeView(tmpPet);
+						//////////////구현필요
+					}else { //삭제 선택시
+						int choice = JOptionPane.showConfirmDialog(null, "정말 삭제하시겠습니까?"
+								+ "","Confirm",JOptionPane.YES_NO_OPTION);
+						if(choice == 0) {
+							LocalDate enterDay = tmpPet.getEnterDate();
+							LocalDate exitDay = tmpPet.getExitDate();
+							int room = tmpPet.getRoomNum();
+							for (LocalDate tmpDay = enterDay; tmpDay.isEqual(exitDay) || tmpDay.isBefore(exitDay); tmpDay = tmpDay.plusDays(1)) {
+								manager.getDayRoomData().get(tmpDay).getRoomArr()[(room/100)-1][(room%100)-1] = false;
+							}
+							manager.getCustomerData().get(changePetView.userPhoneNum).getPet().remove(tmpPet);
+							JOptionPane.showMessageDialog(null, "삭제되었습니다.");
+						}
+					}
+				}
+			});
+		}
+	}
+	public void changePassword() {
+		ChangePasswordView changePasswordView = new ChangePasswordView();
+		changePasswordView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				changePasswordView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		changePasswordView.exitBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				changePasswordView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		changePasswordView.changeBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String nowPw=  String.valueOf(changePasswordView.nowTf.getPassword());
+				String changePw = String.valueOf(changePasswordView.changeTf.getPassword());
+				String reChangePw = String.valueOf(changePasswordView.reChangeTf.getPassword());
+				if(!nowPw.equals(manager.getPassword())) {
+					JOptionPane.showMessageDialog(null, "현재 비밀번호가 일치하지않습니다.");
+					return;
+				}
+				if(!changePw.equals(reChangePw)) {
+					JOptionPane.showMessageDialog(null, "변경 비밀번호가 일치하지 않습니다.");
+					return;
+				}
+				manager.setPassword(changePw);
+				JOptionPane.showMessageDialog(null, "변경되었습니다.");
+				changePasswordView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+	}
+	
+	public void exitPet() { //퇴실/삭제
+		ExitPetView exitPetView = new ExitPetView(manager.getCustomerData());
+		exitPetView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				exitPetView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		exitPetView.backBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				exitPetView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		exitPetView.exitBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(manager.getCustomerData().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "퇴실할 펫이 없습니다.");
+					return;
+				}
+				Iterator<Entry<Integer, Customer>> itr = manager.getCustomerData().entrySet().iterator();
+				while(itr.hasNext()) {
+					Entry<Integer, Customer> tmpEntry = itr.next();
+					int cusPhoneNum = tmpEntry.getKey();
+					Iterator<Pet> itr2 = tmpEntry.getValue().getPet().iterator();
+					while(itr2.hasNext()) {
+						Pet tmpPet = itr2.next();
+						if(tmpPet.getExitDate().isBefore(LocalDate.now())) {
+							tmpEntry.getValue().getExitPet().add(tmpPet);
+							tmpEntry.getValue().getPet().remove(tmpPet);
+						}
+					}
+				}
+				JOptionPane.showMessageDialog(null, "퇴실처리 되었습니다.");
+				exitPetView.reView(manager.getCustomerData());
+			}
+		});
+	}
+	public void exitPetView() { //퇴실내역조회
+		int size;
+		ArrayList<String[]> data = new ArrayList<>();
+		Iterator<Integer> keyItr = manager.getCustomerData().keySet().iterator();
+		while(keyItr.hasNext()) {
+			int key = keyItr.next();
+			Customer cus = manager.getCustomerData().get(key);
+			Iterator<Pet> itr = cus.getExitPet().iterator();
+			while(itr.hasNext()) {
+				Pet tmpPet = itr.next();
+				String [] arr = {
+						""+key,
+						tmpPet.getPetName(),
+						""+tmpPet.getRoomNum(),
+						useFnc.dateToStr(tmpPet.getEnterDate()),
+						useFnc.dateToStr(tmpPet.getExitDate())
+				};
+				data.add(arr);
+			}
+		}
+		AllExitPetView allExitPetView = new AllExitPetView(data);
+		allExitPetView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				allExitPetView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+		allExitPetView.exitBt.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				allExitPetView.dispose();
+				managerMenuView.setVisible(true);
+			}
+		});
+	}
+}
+

@@ -1,0 +1,9 @@
+package DAO;
+
+import java.io.IOException;
+
+public class SaveData {
+	public static void saveData() throws IOException{
+		String txtName = "./data/managerData.txt";
+	}
+}

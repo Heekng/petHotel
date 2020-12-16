@@ -1,0 +1,144 @@
+package View;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import DAO.useFnc;
+import DTO.Pet;
+
+public class ChangePetView extends MainView{
+	public JTextField phoneNumTf;
+	public JButton searchBt, backBt;
+	public ButtonGroup buttonGroup;
+	JPanel midPn, tablePn;
+	public JButton midButton[] = new JButton[10];
+	public String data[][] = new String [10][4];
+	public Pet [] petArr;
+	String title[] = {"펫이름", "방번호", "입실날짜", "퇴실날짜"};
+	public ChangePetView() {
+		
+		for (int i = 0; i < data.length; i++) {
+			for (int j = 0; j < data[i].length; j++) {
+				data[i][j] = "d";
+			}
+		}
+		setTitle("회원 정보 수정/삭제");
+		
+		JPanel topPn = new JPanel(new FlowLayout());
+		phoneNumTf = new JTextField(8);
+		topPn.add(phoneNumTf);
+		searchBt = new JButton("조회");
+		topPn.add(searchBt);
+		buttonGroup = new ButtonGroup();
+		JRadioButton changeRb = new JRadioButton("수정");
+		JRadioButton deleteRb = new JRadioButton("삭제");
+		buttonGroup.add(changeRb);
+		topPn.add(changeRb);
+		buttonGroup.add(deleteRb);
+		topPn.add(deleteRb);
+		
+		midPn = new JPanel();
+		midPn.setLayout(new BoxLayout(midPn, BoxLayout.X_AXIS));
+		
+		JPanel midButtonPn = new JPanel();
+		midButtonPn.setLayout(new BoxLayout(midButtonPn, BoxLayout.Y_AXIS));
+		midButtonPn.setPreferredSize(new Dimension(90, 500));
+		JButton emptyBt = new JButton("버튼") {
+			{
+				setSize(150, 20);
+				setMaximumSize(getSize());
+				setEnabled(false);
+				setOpaque(true);
+				setBackground(Color.WHITE);
+			}
+		};
+		midButtonPn.add(emptyBt);
+		for (int i = 0; i < midButton.length; i++) {
+			midButton[i] = new JButton() {
+				{
+					setSize(150, 75);
+					setMaximumSize(getSize());
+					setBackground(Color.WHITE);
+					setOpaque(true);
+					setEnabled(false);
+				}
+			};
+			midButton[i].setText(i+1+"번 선택");
+			midButtonPn.add(midButton[i]);
+		}
+		midPn.add(midButtonPn);
+		
+		tablePn = new JPanel();
+		DefaultTableModel dtm = new DefaultTableModel(data, title);
+		JTable table = new JTable(dtm);
+		
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		table.setRowHeight(45);
+		JScrollPane sp = new JScrollPane(table);
+		sp.setPreferredSize(new Dimension(390, 500));
+		tablePn.add(sp);
+		midPn.add(tablePn);
+		
+		JPanel buttonPn = new JPanel();
+		backBt = new JButton("나가기");
+		buttonPn.add(backBt);
+		
+		add(topPn);
+		add(midPn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+	public void review(HashSet<Pet> petSet) {
+		for (int i = 0; i < petSet.size(); i++) {
+			midButton[i].setEnabled(true);
+		}
+		Iterator<Pet> itr = petSet.iterator();
+		int num = 0;
+		for (int i = 0; i < data.length; i++) {
+			for (int j = 0; j < data[i].length; j++) {
+				data[i][j] = "";
+			}
+		}
+		while(itr.hasNext()) {
+			Pet tmpPet = itr.next();
+			String arr [] = {
+					tmpPet.getPetName(),
+					""+tmpPet.getRoomNum(),
+					useFnc.dateToStr(tmpPet.getEnterDate()),
+					useFnc.dateToStr(tmpPet.getExitDate())
+			};
+			data[num++] = arr;
+		}
+		DefaultTableModel dtm = new DefaultTableModel(data, title);
+		JTable table = new JTable(dtm);
+		
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		table.setRowHeight(45);
+		JScrollPane sp = new JScrollPane(table);
+		sp.setPreferredSize(new Dimension(390, 500));
+		tablePn.removeAll();
+		tablePn.add(sp);
+		tablePn.setVisible(false);
+		tablePn.setVisible(true);
+	}
+}

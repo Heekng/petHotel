@@ -1,0 +1,8 @@
+package View;
+
+public class ChoiceChangeView extends MainView{
+	public ChoiceChangeView() {
+		setTitle("수정 선택");
+		setSize(400, 400);
+	}
+}

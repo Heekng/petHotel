@@ -1,0 +1,16 @@
+package View;
+
+import java.awt.BorderLayout;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+public class LoopUpView extends MainView{
+
+	public LoopUpView() {
+		setTitle("°í°´ Á¶È¸");
+		JPanel choicePn = new JPanel();
+		choicePn.setLayout(new BoxLayout(choicePn, BoxLayout.X_AXIS));
+	}
+}

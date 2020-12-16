@@ -1,0 +1,24 @@
+package View;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import DTO.Pet;
+
+public class ChoiceChangeView extends MainView{
+	
+	public ChoiceChangeView(Pet pet) {
+		setTitle("수정 선택");
+		setSize(400, 400);
+		
+		JPanel guidPn = new JPanel();
+		JLabel guidLb = new JLabel("수정할 내용을 변경해주세요.");
+		guidPn.add(guidLb);
+		
+		
+		
+		add(guidPn);
+		
+		setVisible(true);
+	}
+}

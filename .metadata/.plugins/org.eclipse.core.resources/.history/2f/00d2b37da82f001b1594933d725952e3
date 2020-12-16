@@ -1,0 +1,35 @@
+package 예외;
+
+public class ExceptionEx_02 {
+	public static void main(String[] args) {
+		try {
+			method1();
+			method2();
+		} catch (ArithmeticException e) {
+			System.out.println("예외~");
+		}catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("배열범위넘어따");
+		}catch (Exception e) {
+			System.out.println("모든예외 다받기~");
+		}finally {
+			System.out.println("데이터페이스 종료");
+			System.out.println("로그아웃");			
+		}
+	}
+	
+	private static void a() throws ArithmeticException, ArrayIndexOutOfBoundsException {
+		b();
+		int [] arr = new int [5];
+		arr[5] = 10;
+	}
+	private static void b() throws ArithmeticException, ArrayIndexOutOfBoundsException{
+		int a = 10;
+		int c = a/2;
+	}
+	private static void method1() {
+
+	}
+	private static void method2() throws ArithmeticException, ArrayIndexOutOfBoundsException {
+		a();
+	}
+}

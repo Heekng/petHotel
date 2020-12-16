@@ -1,0 +1,28 @@
+package 예외;
+
+public class ExceptionEx_02 {
+	public static void main(String[] args) {
+		method1();
+		method2();
+		System.out.println("데이터페이스 종료");
+		System.out.println("로그아웃");
+	}
+	
+	private static void a() {
+		b();
+	}
+	private static void b() {
+		try {
+			int a = 10;
+			int c = a/0;
+		}catch (ArithmeticException e) {
+			e.printStackTrace();
+		}
+	}
+	private static void method1() {
+
+	}
+	private static void method2() {
+		a();
+	}
+}

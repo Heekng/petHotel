@@ -1,0 +1,29 @@
+package 예외;
+
+public class ExceptionEx_02 {
+	public static void main(String[] args) {
+		try {
+			method1();
+			method2();
+		} catch (ArithmeticException e) {
+			System.out.println("예외~");
+		}finally {
+			System.out.println("데이터페이스 종료");
+			System.out.println("로그아웃");			
+		}
+	}
+	
+	private static void a() throws ArithmeticException {
+		b();
+	}
+	private static void b() throws ArithmeticException{
+		int a = 10;
+		int c = a/0;
+	}
+	private static void method1() {
+
+	}
+	private static void method2() throws ArithmeticException {
+		a();
+	}
+}

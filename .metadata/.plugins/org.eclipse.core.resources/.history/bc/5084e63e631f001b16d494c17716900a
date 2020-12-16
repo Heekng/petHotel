@@ -1,0 +1,283 @@
+package p01;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.Set;
+
+class Pet implements Serializable {
+	String petName;
+	String userName;
+	String userNumber;
+	Calendar date;
+	Pet(String petName, String userName, String userNumber, Calendar date) {
+		this.petName = petName;
+		this.userName = userName;
+		this.userNumber = userNumber;
+		this.date = date;
+	}
+}
+public class petHotel{
+	public static HashSet<Pet> petSet = new HashSet<>();
+	static SimpleDateFormat simpleD = new SimpleDateFormat("yy/MM/dd");
+	static void mainMenu() {
+		System.out.println("-----펫 호텔 관리 프로그램-----");
+		System.out.println("1. 펫 등록");
+		System.out.println("2. 전체 조회");
+		System.out.println("3. 기간 연장");		
+		System.out.println("4. 수정");
+		System.out.println("5. 삭제");
+		System.out.println("6. 종료");
+		System.out.println("-----------------------------");
+		System.out.print("원하는 메뉴를 입력해주세요: ");
+	}
+	static void regist() {//펫 등록
+		Scanner sc = new Scanner(System.in);
+		System.out.println("-----------신규 이용자 정보 등록-----------");
+		System.out.print("펫 이름: ");
+		String petName = sc.next();
+		
+		System.out.print("보호자명: ");
+		String userName = sc.next();
+		
+		System.out.print("보호자 번호( - 없이 입력): ");
+		String userNumber = sc.next();
+		
+		System.out.print("퇴실 날짜(yyMMdd): ");
+		String exDate = sc.next();
+		Calendar date = Calendar.getInstance();
+		date.set(Calendar.YEAR, 2000+Integer.parseInt(exDate.substring(0, 2)));
+		date.set(Calendar.MONTH, Integer.parseInt(exDate.substring(2, 4))-1); //월은 0부터 시작
+		date.set(Calendar.DAY_OF_MONTH, Integer.parseInt(exDate.substring(4, 6)));
+		date.set(Calendar.HOUR_OF_DAY, 12);
+		date.set(Calendar.MINUTE, 0);
+		date.set(Calendar.SECOND, 0);
+		Pet p = new Pet(petName, userName, userNumber, date);
+		petSet.add(p);
+		System.out.println("등록 완료되었습니다.");
+		System.out.println("-----------------------------------------");
+		try {
+			SaveDAO.saveData();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	static void lookup() {//전체 조회
+		Iterator<Pet> search = petSet.iterator();
+		System.out.println("-------------------------------------전체  조회-------------------------------------");
+		if(!search.hasNext()) {
+			System.out.println("조회할 정보가 없습니다.");
+		}else {
+			System.out.println("펫 이름\t\t보호자명\t보호자 전화번호\t퇴실날짜\t\t비고");
+			while(search.hasNext()) {
+				String caution = "없음";
+				Pet exPet = search.next();
+				String endDate = simpleD.format(exPet.date.getTime());
+				System.out.println();
+				exPet.date.add(Calendar.DATE, -3);
+				//현재날짜받아옴
+				Calendar now = Calendar.getInstance();
+				now.set(Calendar.HOUR_OF_DAY, 13);
+				now.set(Calendar.MINUTE, 0);
+				now.set(Calendar.SECOND, 0);
+				
+				if(now.compareTo(exPet.date) == 1 || now.compareTo(exPet.date) == 0) {
+					caution = "퇴실 안내 필요";
+				}
+				System.out.println(exPet.petName+"\t\t"+exPet.userName+"\t\t"+exPet.userNumber+"\t"+endDate
+						+"\t\t"+caution);
+				exPet.date.add(Calendar.DATE, 3);
+			}
+		}
+		System.out.println("-----------------------------------------------------------------------------------");			
+	}
+	static void extend() {//기간 연장
+		Scanner sc = new Scanner(System.in);
+		String pNum, petName;
+		int cnt = 0;
+		System.out.println("---------------------------기간  연장---------------------------");
+		System.out.print("보호자 전화번호를 입력해주세요.: ");
+		pNum = sc.next();
+		Iterator<Pet> itr = petSet.iterator();
+		while(itr.hasNext()) {
+			Pet exPet = itr.next();
+			if(exPet.userNumber.equals(pNum)) { //번호가 일치할 때
+				cnt++;
+				if(cnt == 1) {
+					System.out.println("조회하신 번호에 해당되는 펫은 다음과 같습니다.");
+					System.out.println("번호\t펫이름\t보호자명\t퇴실날짜");
+				}
+				System.out.println(cnt +"\t"+ exPet.petName+"\t"+exPet.userName+"\t\t"+dayString(exPet.date));
+			}
+		}
+		if(cnt == 0) {
+			System.out.println("보호자 전화번호를 확인해주세요.");
+		}else {
+			System.out.println("---------------------------------------------------------------");
+			System.out.print("기간을 연장할 펫의 이름을 입력해주세요.: ");
+			petName = sc.next();
+			Iterator<Pet> itr2 = petSet.iterator();
+			while(itr2.hasNext()) {
+				Pet exPet = itr2.next();
+				if(exPet.petName.equals(petName) && exPet.userNumber.equals(pNum)) {
+					System.out.println(exPet.petName+"의 현재 퇴실 날짜는 "+dayString(exPet.date)+" 입니다.");
+					System.out.print("연장하실 일수를 입력해주세요.(숫자만 입력): ");
+					int num = sc.nextInt();
+					exPet.date.add(Calendar.DATE, num);
+					System.out.println(exPet.petName+"의 수정된 퇴실 날짜는 "+dayString(exPet.date)+" 입니다.");
+					try {
+						SaveDAO.saveData();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	static void revice() {//수정
+		String pNum, petName;
+		int cnt=0;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("---------------------------정보  수정---------------------------");
+		System.out.print("보호자 전화번호를 입력해주세요.: ");
+		pNum = sc.next();
+		Iterator<Pet> itr = petSet.iterator();
+		while(itr.hasNext()) {
+			Pet exPet = itr.next();
+			if(exPet.userNumber.equals(pNum)) { //번호가 일치할 때
+				cnt++;
+				if(cnt == 1) {
+					System.out.println("조회하신 번호에 해당되는 펫은 다음과 같습니다.");
+					System.out.println("번호\t펫이름\t보호자명\t퇴실날짜");
+				}
+				System.out.println(cnt++ +"\t"+ exPet.petName+"\t"+exPet.userName+"\t\t"+dayString(exPet.date));
+			}
+		}
+		if(cnt == 0) {
+			System.out.println("보호자 전화번호를 확인해주세요.");
+		}else {
+			cnt = 0;
+			System.out.println("---------------------------------------------------------------");
+			System.out.print("수정할 펫의 이름을 입력해주세요.: ");
+			petName = sc.next();
+			Iterator<Pet> itr2 = petSet.iterator();
+			while(itr2.hasNext()) {
+				Pet exPet = itr2.next();
+				if(exPet.petName.equals(petName) && exPet.userNumber.equals(pNum)) {
+					cnt = 1;
+					System.out.println("수정할 내용을 입력해주세요.\n수정하지 않을 항목은 숫자 0 을 입력하세요.");
+					System.out.print("펫 이름: ");
+					String petName2 = sc.next();
+					if(!petName2.equals("0")) {
+						exPet.petName = petName2;
+					}
+					System.out.print("보호자명: ");
+					String userName2 = sc.next();
+					if(!userName2.equals("0")) {
+						exPet.userName = userName2;
+					}
+					System.out.print("보호자 번호( - 없이 입력): ");
+					String userNumber2 = sc.next();
+					if(!userNumber2.equals("0")) {
+						exPet.userNumber = userNumber2;
+					}
+					System.out.print("퇴실 날짜(yyMMdd): ");
+					String exDate2 = sc.next();
+					if(!exDate2.equals("0")) {
+						Calendar date2 = Calendar.getInstance();
+						date2.set(Calendar.YEAR, 2000+Integer.parseInt(exDate2.substring(0, 2)));
+						date2.set(Calendar.MONTH, Integer.parseInt(exDate2.substring(2, 4))-1); //월은 0부터 시작
+						date2.set(Calendar.DAY_OF_MONTH, Integer.parseInt(exDate2.substring(4, 6)));
+						date2.set(Calendar.HOUR_OF_DAY, 12);
+						date2.set(Calendar.MINUTE, 0);
+						date2.set(Calendar.SECOND, 0);
+						exPet.date = date2;
+					}
+					System.out.println("수정 완료되었습니다.");
+					try {
+						SaveDAO.saveData();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			if(cnt == 1) {
+				System.out.println("전화번호에 일치하는 펫이 없습니다. 확인해주세요.");
+			}
+			System.out.println("---------------------------------------------------------------");
+		}
+	}
+	static void delete() {//삭제
+		Scanner sc = new Scanner(System.in);
+		boolean sw = false;
+		System.out.println("---------------------------정보  삭제---------------------------");
+		System.out.print("삭제할 펫의 이름: ");
+		String petName = sc.next();
+		System.out.print("보호자 전화번호: ");
+		String pNum = sc.next();
+		Iterator<Pet> itr = petSet.iterator();
+		while(itr.hasNext()) {
+			Pet exPet = itr.next();
+			if(exPet.petName.equals(petName) && exPet.userNumber.equals(pNum)) {
+				sw = true;
+				petSet.remove(exPet);
+				System.out.println("삭제되었습니다.");
+				try {
+					SaveDAO.saveData();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		if(sw) {
+			System.out.println("조회되는 정보가 없습니다.");
+		}
+		System.out.println("---------------------------------------------------------------");
+	}
+	static String dayString(Calendar cal) {
+		SimpleDateFormat simpleD = new SimpleDateFormat("yy/MM/dd");
+		return simpleD.format(cal.getTime());
+	}
+	
+	public static void main(String[] args) {
+		SaveDAO.returnData();
+		Scanner sc = new Scanner(System.in);
+		int choice; //메뉴선택번호
+		boolean sw = true; //while문 스위치
+		while(sw) {
+			mainMenu();
+			choice = sc.nextInt();
+			switch (choice) {
+			case 1:
+				regist();
+				break;
+			case 2:
+				lookup();
+				break;
+			case 3:
+				extend();
+				break;
+			case 4:
+				revice();
+				break;
+			case 5:
+				delete();
+				break;
+			case 6:
+				sw = false;
+				break;
+			default:
+				System.out.println("잘못된 입력입니다.");
+				break;
+			}
+		}
+	}
+}

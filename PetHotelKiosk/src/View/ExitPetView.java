@@ -1,0 +1,133 @@
+package View;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import DAO.useFnc;
+import DTO.Customer;
+import DTO.Pet;
+
+public class ExitPetView extends MainView{
+	public String data[][] = new String[50][5];
+	public int phoneNum;
+	public JButton backBt, exitBt;
+	public JPanel listPn;
+	JTable table;
+	JScrollPane sp;
+	String title[] = {"전화번호", "펫이름", "방번호", "입실날짜", "퇴실날짜"};
+	
+	public ExitPetView(HashMap<Integer, Customer> customerData) {
+		setTitle("일괄 퇴실");
+		JPanel choicePn = new JPanel();
+		choicePn.setLayout(new FlowLayout());
+		
+		
+		
+		int cnt = 0;
+		Iterator<Entry<Integer, Customer>> itr = customerData.entrySet().iterator();
+		while(itr.hasNext()) {
+			Entry<Integer, Customer> tmpEntry = itr.next();
+			int cusPhoneNum = tmpEntry.getKey();
+			Iterator<Pet> itr2 = tmpEntry.getValue().getPet().iterator();
+			while(itr2.hasNext()) {
+				Pet tmpPet = itr2.next();
+				if(tmpPet.getExitDate().isBefore(LocalDate.now())) {
+					String [] arr = {
+							""+cusPhoneNum, 
+							tmpPet.getPetName(),
+							""+tmpPet.getRoomNum(),
+							useFnc.dateToStr(tmpPet.getEnterDate()),
+							useFnc.dateToStr(tmpPet.getExitDate())
+					};
+					data[cnt++] = arr;					
+				}
+			}
+		}
+		
+		JPanel topPn = new JPanel();
+		JLabel topLb = new JLabel("퇴실처리가 필요한 펫입니다.");
+		topLb.setFont(new Font("맑은 고딕", Font.BOLD, 25));
+		topPn.add(topLb);
+		
+		listPn = new JPanel();
+		table = new JTable(data, title);
+		table.setRowHeight(19);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		sp = new JScrollPane(table);
+		listPn.add(sp);
+		
+		
+		JPanel buttonPn = new JPanel();
+		exitBt = new JButton("퇴실 처리");
+		
+		buttonPn.add(exitBt);
+		
+		backBt = new JButton("뒤로 가기");
+		buttonPn.add(backBt);
+		
+		add(topPn);
+		add(choicePn, BorderLayout.PAGE_START);
+		add(listPn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+	public void reView(HashMap<Integer, Customer> customerData) {
+		int cnt = 0;
+		Iterator<Entry<Integer, Customer>> itr = customerData.entrySet().iterator();
+		while(itr.hasNext()) {
+			Entry<Integer, Customer> tmpEntry = itr.next();
+			int cusPhoneNum = tmpEntry.getKey();
+			Iterator<Pet> itr2 = tmpEntry.getValue().getPet().iterator();
+			while(itr2.hasNext()) {
+				Pet tmpPet = itr2.next();
+				if(tmpPet.getExitDate().isBefore(LocalDate.now())) {
+					String [] arr = {
+							""+cusPhoneNum, 
+							tmpPet.getPetName(),
+							""+tmpPet.getRoomNum(),
+							useFnc.dateToStr(tmpPet.getEnterDate()),
+							useFnc.dateToStr(tmpPet.getExitDate())
+					};
+					data[cnt++] = arr;					
+				}
+			}
+		}
+		listPn = new JPanel();
+		table = new JTable(data, title);
+		table.setRowHeight(19);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.setFocusable(false);
+		table.setRowSelectionAllowed(false);
+		sp = new JScrollPane(table);
+		listPn.setVisible(false);
+		listPn.setVisible(true);
+	}
+}

@@ -1,0 +1,173 @@
+package View;
+
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import DAO.useFnc;
+import DTO.Pet;
+
+public class ChoiceChangeView extends MainView{
+	
+	public JButton enterDayBt, exitDayBt;
+	public JButton backBt;
+	public JTextField petNameTf, roomNumTf, enterDayTf, exitDayTf;
+	
+	public ChoiceChangeView(Pet pet) {
+		setTitle("수정 선택");
+		setSize(400, 400);
+		
+		Dimension dimen = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension dimen2 = getSize();
+		int x = (dimen.width - dimen2.width)/2;
+		int y= (dimen.height - dimen2.height)/2;
+		setLocation(x, y);
+		
+		JPanel guidPn = new JPanel();
+		JLabel guidLb = new JLabel("수정할 내용을 변경해주세요.");
+		guidPn.add(guidLb);
+		
+		JPanel petNamePn = new JPanel(new FlowLayout());
+		JLabel petNameLb = new JLabel("펫 이름");
+		petNameTf = new JTextField(8);
+		petNameTf.setText(pet.getPetName());
+		petNamePn.add(petNameLb);
+		petNamePn.add(petNameTf);
+
+		JPanel roomNumPn = new JPanel(new FlowLayout());
+		JLabel roomNumLb = new JLabel("방 번호");
+		roomNumTf = new JTextField(8);
+		roomNumTf.setText(""+pet.getRoomNum());
+		roomNumPn.add(roomNumLb);
+		roomNumPn.add(roomNumTf);
+		
+		JPanel enterDayPn = new JPanel(new FlowLayout());
+		JLabel enterDayLb = new JLabel("입실 날짜");
+		enterDayTf = new JTextField(8);
+		enterDayTf.setText(useFnc.dateToStr(pet.getEnterDate()));
+		enterDayBt = new JButton("날짜 선택");
+		enterDayBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CalandarView cal = new CalandarView();
+				for (int i = 0; i < cal.dateButs.length; i++) {
+					for (int j = 0; j < cal.dateButs[i].length; j++) {
+						cal.dateButs[i][j].addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								int k=0,l=0;
+								for(int i=0 ; i<6 ; i++){
+									for(int j=0 ; j<7 ; j++){
+										if(e.getSource() == cal.dateButs[i][j]){ 
+											k=i;
+											l=j;
+										}
+									}
+								}
+								if(!(k ==0 && l == 0)) cal.calDayOfMon = cal.calDates[k][l];
+								String realYear, realMonth, realDay;
+								if(cal.calYear%100 < 10) realYear = "0"+(cal.calYear%100);
+								else realYear = ""+(cal.calYear%100);
+								if(cal.calMonth+1 < 10) realMonth = "0" +(cal.calMonth+1);
+								else realMonth = "" +(cal.calMonth+1);
+								if(cal.calDayOfMon < 10) realDay = "0" + (cal.calDayOfMon);
+								else realDay = "" + (cal.calDayOfMon);
+								
+								String time = realYear+realMonth+realDay;
+								
+								enterDayTf.setText(time);
+								cal.mainFrame.dispose();
+							}
+						});
+					}
+				}
+				cal.mainFrame.addWindowListener(new WindowAdapter() {
+					@Override
+					public void windowClosing(WindowEvent e) {
+						cal.mainFrame.dispose();
+					}
+				});
+			}
+		});
+		enterDayPn.add(enterDayLb);
+		enterDayPn.add(enterDayTf);
+		enterDayPn.add(enterDayBt);
+		
+		JPanel exitDayPn = new JPanel(new FlowLayout());
+		JLabel exitDayLb = new JLabel("퇴실 날짜");
+		exitDayTf = new JTextField(8);
+		exitDayTf.setText(useFnc.dateToStr(pet.getExitDate()));
+		exitDayBt = new JButton("날짜 선택");
+		exitDayBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CalandarView cal = new CalandarView();
+				for (int i = 0; i < cal.dateButs.length; i++) {
+					for (int j = 0; j < cal.dateButs[i].length; j++) {
+						cal.dateButs[i][j].addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								int k=0,l=0;
+								for(int i=0 ; i<6 ; i++){
+									for(int j=0 ; j<7 ; j++){
+										if(e.getSource() == cal.dateButs[i][j]){ 
+											k=i;
+											l=j;
+										}
+									}
+								}
+								if(!(k ==0 && l == 0)) cal.calDayOfMon = cal.calDates[k][l];
+								String realYear, realMonth, realDay;
+								if(cal.calYear%100 < 10) realYear = "0"+(cal.calYear%100);
+								else realYear = ""+(cal.calYear%100);
+								if(cal.calMonth+1 < 10) realMonth = "0" +(cal.calMonth+1);
+								else realMonth = "" +(cal.calMonth+1);
+								if(cal.calDayOfMon < 10) realDay = "0" + (cal.calDayOfMon);
+								else realDay = "" + (cal.calDayOfMon);
+								
+								String time = realYear+realMonth+realDay;
+								
+								exitDayTf.setText(time);
+								cal.mainFrame.dispose();
+							}
+						});
+					}
+				}
+				cal.mainFrame.addWindowListener(new WindowAdapter() {
+					@Override
+					public void windowClosing(WindowEvent e) {
+						cal.mainFrame.dispose();
+					}
+				});
+			}
+		});
+		exitDayPn.add(exitDayLb);
+		exitDayPn.add(exitDayTf);
+		exitDayPn.add(exitDayBt);
+		
+		JPanel buttonPn = new JPanel();
+		JButton enterBt = new JButton("수정");
+		buttonPn.add(enterBt);
+		backBt = new JButton("나가기");
+		buttonPn.add(backBt);
+		
+		
+		add(guidPn);
+		add(petNamePn);
+		add(roomNumPn);
+		add(enterDayPn);
+		add(exitDayPn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+}

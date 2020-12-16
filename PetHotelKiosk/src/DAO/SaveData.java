@@ -1,0 +1,31 @@
+package DAO;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
+import DTO.Manager;
+
+public class SaveData {
+	static String txtName = "./data/managerData.txt";
+	public static void saveData() throws IOException{
+		File file = new File(txtName);
+		OutputStream ops = new FileOutputStream(file);
+		ObjectOutputStream oos = new ObjectOutputStream(ops);
+		oos.writeObject(Business.manager);
+		oos.flush();
+		oos.close();
+	}
+	public static void returnData() throws IOException, ClassNotFoundException {
+		FileInputStream fis = new FileInputStream(txtName);
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		
+		Object object = ois.readObject();
+		ois.close();
+		Business.manager = (Manager) object;
+	}
+}

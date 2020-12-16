@@ -1,0 +1,35 @@
+package DTO;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.HashMap;
+
+public class Manager  implements Serializable{
+	private HashMap<LocalDate, Day> dayRoomData = new HashMap<>();
+	private HashMap<Integer, Customer> customerData = new HashMap<>(); //전화번호-고객정보
+	
+	private String password = "1234";
+	
+	
+	
+	public HashMap<LocalDate, Day> getDayRoomData() {
+		return dayRoomData;
+	}
+	public void setDayRoomData(HashMap<LocalDate, Day> dayRoomData) {
+		this.dayRoomData = dayRoomData;
+	}
+	public HashMap<Integer, Customer> getCustomerData() {
+		return customerData;
+	}
+	public void setCustomerData(HashMap<Integer, Customer> customerData) {
+		this.customerData = customerData;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	
+}

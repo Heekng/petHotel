@@ -1,0 +1,65 @@
+package View;
+
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Toolkit;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+public class ChangePasswordView extends MainView{
+	
+	public JPasswordField nowTf, changeTf, reChangeTf;
+	public JButton changeBt, exitBt;
+	
+	public ChangePasswordView() {
+		setTitle("관리자 비밀번호 변경");
+		setSize(400, 300);
+		
+		JPanel userPn = new JPanel();
+		JLabel userLb = new JLabel("현재비밀번호와 변경할 비밀번호를 입력해주세요.");
+		userPn.add(userLb);
+		
+		Dimension dimen = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension dimen2 = getSize();
+		int x = (dimen.width - dimen2.width)/2;
+		int y= (dimen.height - dimen2.height)/2;
+		setLocation(x, y);
+		
+		JPanel nowPn = new JPanel(new FlowLayout());
+		JLabel nowLb = new JLabel("현재 비밀번호");
+		nowPn.add(nowLb);
+		nowTf = new JPasswordField(8);
+		nowPn.add(nowTf);
+		
+		JPanel changePn = new JPanel(new FlowLayout());
+		JLabel changeLb = new JLabel("변경 비밀번호");
+		changePn.add(changeLb);
+		changeTf = new JPasswordField(8);
+		changePn.add(changeTf);
+		
+		JPanel reChangePn = new JPanel(new FlowLayout());
+		JLabel reChangeLb = new JLabel("변경 비밀번호 확인");
+		reChangePn.add(reChangeLb);
+		reChangeTf = new JPasswordField(8);
+		reChangePn.add(reChangeTf);
+		
+		JPanel buttonPn = new JPanel();
+		changeBt = new JButton("변경");
+		buttonPn.add(changeBt);
+		exitBt = new JButton("나가기");
+		buttonPn.add(exitBt);
+		
+		add(userPn);
+		add(nowPn);
+		add(changePn);
+		add(reChangePn);
+		add(buttonPn);
+		
+		setVisible(true);
+	}
+}
